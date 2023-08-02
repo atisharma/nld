@@ -8,7 +8,6 @@ See 'Elegant Chaos' by J C Sprott for inspiration.
 (require hyrule.control [unless])
 
 (import jax)
-;(jax.config.update "jax_enable_x64" True)
 
 (import jax.numpy :as jnp)
 (import jax.numpy.fft [rfft irfft rfftfreq])
