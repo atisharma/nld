@@ -5,11 +5,12 @@ Minimal implementation of Runge-Kutta integration with fixed timestep.
 ; TODO: consider integrating with an adaptive timestep,
 ;       returning a trajectory aliased to fixed timestep
 
-(require [hy.contrib.walk [let]])
+(require hyrule.argmove [-> ->> as->])
+(require hyrule.control [unless])
 
-(import [itertools [accumulate]])
-(import [jax.numpy :as jnp])
-(import [jax [jit]])
+(import itertools [accumulate])
+(import jax.numpy :as jnp)
+(import jax [jit])
 
 
 (defn rk4 [f v * h [t 0] #** kwargs]
@@ -36,7 +37,6 @@ Minimal implementation of Runge-Kutta integration with fixed timestep.
        (* (/ h 6)
           (+ k1 (* k2 2) (* k3 2) k4)))))
 
-
 (defn integrate [f v0 * [h 1e-4] [steps None] [T None] [as-iterator False] #** kwargs]
   """
   Integrate the 1D PDE.
@@ -44,28 +44,31 @@ Minimal implementation of Runge-Kutta integration with fixed timestep.
     Returns a dict.
     The trajectory is a device array, or (if specified) an unrealised iterator,
     of shape steps x states.
+  Though rk4 cannot be jit compiled because it accepts a function
+  as an argument, its partial application to f can be.
   """
-  ; N.B. though rk4 cannot be jit compiled because it accepts a function
-  ; as an argument, its partial application to f can be.
   (let [rk4-step (jit (fn [vn t] (rk4 f vn :h h :t t #** kwargs)))
         steps-to-run (or steps (round (/ T h)))
         result (accumulate (range steps-to-run) :func rk4-step :initial v0)
         t (* (jnp.arange 0 (+ 1 steps-to-run)) h)]
-    {"trajectory" (if as-iterator result (-> result list jnp.array)) 
+    {"trajectory" (if as-iterator result (-> result (list) (jnp.array)))
      "t" t
      "h" h
      "steps" steps-to-run
      "T" (get t -1)
      "system" f.__name__}))
 
-
-(defn truncate [data [steps -1] [T None]]
+(defn truncate [data [steps None] [T None]]
   """
   Truncate a trajectory to a final time, or number of steps.
+  If both steps and T are specified, steps is used.
+  Default is all steps.
   """
   (let [h (:h data)
-        steps-to-use (or steps (+ 1 (round (/ T h))))
-        t (get (:t data) (slice 0 steps-to-use))]
+        steps-to-use (cond steps steps
+                           T (+ 1 (round (/ T h)))
+                           :else -1)
+        t (cut (:t data) 0 steps-to-use)]
     {#** data
      "trajectory" (get (:trajectory data) (slice 0 steps-to-use) (slice None))
      "t" t

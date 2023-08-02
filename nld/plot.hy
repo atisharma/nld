@@ -2,15 +2,18 @@
 Integrate systems with RK4 and then plot them.
 """
 
-(require [hy.contrib.walk [let]])
+(require hyrule.argmove [-> ->> as->])
+(require hyrule.control [unless])
 
-(import [matplotlib [pyplot :as plt]])
+(import matplotlib [pyplot :as plt])
 
-(import [jax.numpy :as jnp])
-(import [jax.numpy [pi]])
+(import jax.numpy :as jnp)
+(import jax.numpy [pi])
 
-(import [systems [x]])
+(import systems [x])
 
+
+(plt.ion)
 
 ; default plotting style
 (setv plotstyle {"linewidth" 0.5
@@ -18,7 +21,6 @@ Integrate systems with RK4 and then plot them.
                  "antialiased" True})
 
 (setv default-cmap "viridis")
-
 
 (defn contourf [data * [silent True] [x x] [plot-abs False] [colorbar False] [cmap default-cmap] [num-contours 16] #** kwargs]
   """
@@ -40,7 +42,6 @@ Integrate systems with RK4 and then plot them.
              "x" x
              "colorbar" cbar})))
 
-
 (defn pcolor [data * [silent True] [x x] [plot-abs False] [colorbar False] [cmap default-cmap] #** kwargs]
   """
   Integrate and plot a 1D PDE.
@@ -61,7 +62,6 @@ Integrate systems with RK4 and then plot them.
              "x" x
              "colorbar" cbar})))
 
-
 (defn plot1d [data * [silent True] #** kwargs]
   """
   Integrate and plot the first two states.
@@ -75,7 +75,6 @@ Integrate systems with RK4 and then plot them.
     (unless silent
             {"fig" fig
              "axes" ax})))
-
 
 (defn plot2d [data * [silent True] #** kwargs]
   """
@@ -93,7 +92,6 @@ Integrate systems with RK4 and then plot them.
     (unless silent
             {"fig" fig
              "axes" ax})))
-
 
 (defn plot3d [data * [silent True] #** kwargs]
   """
@@ -114,7 +112,6 @@ Integrate systems with RK4 and then plot them.
             {"fig" fig
              "axes" ax})))
 
-
 (defn plot [data #** kwargs]
   """
   Integrate and plot.
@@ -122,6 +119,6 @@ Integrate systems with RK4 and then plot them.
   (let [l (-> (:trajectory data)
               (. shape)
               (get 1))]
-    (cond [(= l 2) (plot2d   data #** kwargs)]
-          [(= l 3) (plot3d   data #** kwargs)]
-          [:else   (contourf data #** kwargs)])))
+    (cond (= l 2) (plot2d   data #** kwargs)
+          (= l 3) (plot3d   data #** kwargs)
+          :else   (contourf data #** kwargs))))

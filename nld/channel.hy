@@ -20,10 +20,8 @@
 (defn dfdy [f y]
   None)
 
-
 (defn d2fdy2 [f y]
   None)
-
 
 (defn d4fdy4 [f y]
   None)
