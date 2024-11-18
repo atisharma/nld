@@ -10,7 +10,7 @@ Integrate systems with RK4 and then plot them.
 (import jax.numpy :as jnp)
 (import jax.numpy [pi])
 
-(import systems [x])
+(import .systems [x])
 
 
 (plt.ion)

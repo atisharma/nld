@@ -47,9 +47,9 @@ Minimal implementation of Runge-Kutta integration with fixed timestep.
   Though rk4 cannot be jit compiled because it accepts a function
   as an argument, its partial application to f can be.
   """
-  (let [rk4-step (jit (fn [vn t] (rk4 f vn :h h :t t #** kwargs)))
+  (let [rk4-step (fn [vn t] (rk4 f vn :h h :t t #** kwargs))
         steps-to-run (or steps (round (/ T h)))
-        result (accumulate (range steps-to-run) :func rk4-step :initial v0)
+        result (jit (accumulate (range steps-to-run) :func rk4-step :initial v0))
         t (* (jnp.arange 0 (+ 1 steps-to-run)) h)]
     {"trajectory" (if as-iterator result (-> result (list) (jnp.array)))
      "t" t

@@ -15,7 +15,7 @@ See 'Elegant Chaos' by J C Sprott for inspiration.
 (import jax.numpy [pi])
 (import jax [random jit])
 
-(import numerics [integrate])
+(import .numerics [integrate])
 
 
 (setv rkey (random.PRNGKey 10))
@@ -24,7 +24,7 @@ See 'Elegant Chaos' by J C Sprott for inspiration.
   """
   Random initial condition of dimension N.
   """
-  (* (random.normal rkey :shape (, N)) 1e-1))
+  (* (random.normal rkey :shape #(N)) 1e-1))
 
 
 ;;;;;;;;;;;
@@ -44,7 +44,7 @@ See 'Elegant Chaos' by J C Sprott for inspiration.
 (setv v0 (* (random.normal rkey :shape #( N)) 1e-1))
 
 
-(defn [jit] ks [v * [t 0] [kappa (/ (* 4 pi pi) 1521)]]
+(defn ks [v * [t 0] [kappa (/ (* 4 pi pi) 1521)]]
   """
   Fourier representation of Kuramoto-Sivashinsky.
     dv(x,t)/dt = d/dx (vv) - d^2/dx^2 v - d^4/dx^4 v
@@ -64,7 +64,7 @@ See 'Elegant Chaos' by J C Sprott for inspiration.
               v-hat-xx
               (* kappa v-hat-xxxx)))))
          
-(defn [jit] ks-cubic [u * [t 0] [L 100]]
+(defn ks-cubic [u * [t 0] [L 100]]
   """
   Kuramoto-Sivashinsky with cubic nonlinearity.
     See Chapter 8 of 'Elegant Chaos'.
@@ -80,7 +80,7 @@ See 'Elegant Chaos' by J C Sprott for inspiration.
           (irfft (+ u-hat-xx
                     u-hat-xxxx))))))
          
-(defn [jit] pd13 [u * [t 0] [L 100]]
+(defn pd13 [u * [t 0] [L 100]]
   """
   PD13 from table 8.1 in 'Elegant Chaos'.
   du(x,t)/dt = 1 + (1 - u^3 u_xxx) u_xxx
@@ -93,7 +93,7 @@ See 'Elegant Chaos' by J C Sprott for inspiration.
        (* u-xxx
           (- 1 (* u u u u-xxx))))))
          
-(defn [jit] nlse [phi * [t 0] [kappa -0.5]]
+(defn nlse [phi * [t 0] [kappa -0.5]]
    """
    Nonlinear Schroedinger equation.
    dphi(x,t)/dt = -i/2 d^2/dx^2 phi - i kappa phi |phi|^2
@@ -106,7 +106,7 @@ See 'Elegant Chaos' by J C Sprott for inspiration.
 
 
 ; TODO: finish this
-(defn [jit] gl [phi * [t 0] [nu (+ 2 0.2j)] [gamma (- 1 1j)] [mu_0 0.23] [c_mu 0.2] [mu_2 -0.01]]
+(defn gl [phi * [t 0] [nu (+ 2 0.2j)] [gamma (- 1 1j)] [mu_0 0.23] [c_mu 0.2] [mu_2 -0.01]]
    """
    Ginzburg-Landau equation, one variant thereof.
      It is spatially localised behaviour, so Fourier discretisation may be a bit inappropriate.
@@ -123,7 +123,7 @@ See 'Elegant Chaos' by J C Sprott for inspiration.
      (+ (* -1 nu phi-x)
         (* gamma phi-xx))))
 
-(defn [jit] diffusion [u * [t 0] [nu 1]]
+(defn diffusion [u * [t 0] [nu 1]]
    """
    Diffusion equation.
    """
@@ -131,13 +131,13 @@ See 'Elegant Chaos' by J C Sprott for inspiration.
          u-hat-xx    (* rDxh rDxh u-hat)]
      (* nu (irfft u-hat-xx))))
   
-(defn [jit] neutral [u * [t 0]]
+(defn neutral [u * [t 0]]
    """
    dv/dt = 0.
    """
    (* u 0))
 
-(defn [jit] stable [u * [t 0]]
+(defn stable [u * [t 0]]
    """
    dv/dt = -u
    """
@@ -148,7 +148,7 @@ See 'Elegant Chaos' by J C Sprott for inspiration.
 ;; 3D ODEs ;;;
 ;;;;;;;;;;;;;;
 
-(defn [jit] lorenz [v * [t 0] [beta (/ 8.0 3.0)] [rho 30] [sigma 10]]
+(defn lorenz [v * [t 0] [beta (/ 8.0 3.0)] [rho 30] [sigma 10]]
    """
    Lorenz system.
    v(t) = (x, y, z)(t)
@@ -163,7 +163,7 @@ See 'Elegant Chaos' by J C Sprott for inspiration.
                  (- (* x (- rho z)) y)
                  (- (* x y) (* beta z))])))
 
-(defn [jit] roessler [v * [t 0] [a 0.1] [b 0.1] [c 14]]
+(defn roessler [v * [t 0] [a 0.1] [b 0.1] [c 14]]
    """
    Roessler system.
    v(t) = (x, y, z)(t)
@@ -178,7 +178,7 @@ See 'Elegant Chaos' by J C Sprott for inspiration.
                  (+ x (* a y))
                  (+ b (* z (- x c)))])))
 
-(defn [jit] roessler-p4 [v * [t 0] [a 0.5] [b 0.5]]
+(defn roessler-p4 [v * [t 0] [a 0.5] [b 0.5]]
    """
    Roessler prototype-4 system.
    v(t) = (x, y, z)(t)
@@ -193,7 +193,7 @@ See 'Elegant Chaos' by J C Sprott for inspiration.
                  x
                  (- (* a y) (* a y y) (* b z))])))
 
-(defn [jit] sqd [v * [t 0]]
+(defn sqd [v * [t 0]]
    """
    Sprott SQ_D system.
      Time reversible, although dissipative.
@@ -209,7 +209,7 @@ See 'Elegant Chaos' by J C Sprott for inspiration.
                  (+ x z)
                  (+ (* x z) (* 2 y y))])))
 
-(defn [jit] multiscroll [v * [t 0]]
+(defn multiscroll [v * [t 0]]
    """
    Multiscroll system.
    v(t) = (x, y, z)(t)
@@ -224,7 +224,7 @@ See 'Elegant Chaos' by J C Sprott for inspiration.
                  (- (* x z) y)
                  (- (* x y) (* 2 z))])))
 
-(defn [jit] chua [v * [t 0] [a 3]]
+(defn chua [v * [t 0] [a 3]]
    """
    Simplified ('elegant') Chua's system.
    v(t) = (x, y, z)(t)
@@ -239,7 +239,7 @@ See 'Elegant Chaos' by J C Sprott for inspiration.
                  (- z x)
                  y])))
 
-(defn [jit] rikitake [v * [t 0] [alpha 1][ mu 1]]
+(defn rikitake [v * [t 0] [alpha 1][ mu 1]]
    """
    Rikitake dynamo.
    v(t) = (x, y, z)(t)
@@ -255,7 +255,7 @@ See 'Elegant Chaos' by J C Sprott for inspiration.
                     (* mu y))
                  (- 1 (* x y))])))
 
-(defn [jit] nose-hoover [v * [t 0]]
+(defn nose-hoover [v * [t 0]]
    """
    Nosé–Hoover Oscillator
    v(t) = (x, y, z)(t)
@@ -270,7 +270,7 @@ See 'Elegant Chaos' by J C Sprott for inspiration.
                  (- (* y z) x)
                  (- 1 (* y y))])))
 
-(defn [jit] labyrinth [v * [t 0]]
+(defn labyrinth [v * [t 0]]
    """
    Labyrinth chaos of René Thomas
    v(t) = (x, y, z)(t)
@@ -285,7 +285,7 @@ See 'Elegant Chaos' by J C Sprott for inspiration.
                  (jnp.sin z)
                  (jnp.sin x)])))
 
-(defn [jit] duffing [v * [t 0] [alpha -1] [beta 1] [delta 0.3] [gamma 0.29] [omega 1.2]]
+(defn duffing [v * [t 0] [alpha -1] [beta 1] [delta 0.3] [gamma 0.29] [omega 1.2]]
    """
    Duffing equation.
      δ controls the amount of damping,
@@ -311,7 +311,7 @@ See 'Elegant Chaos' by J C Sprott for inspiration.
 ;; 2D ODEs ;;;
 ;;;;;;;;;;;;;;
 
-(defn [jit] lv [v * [t 0] [alpha 0.67] [beta 1.33] [gamma 1] [delta 1]]
+(defn lv [v * [t 0] [alpha 0.67] [beta 1.33] [gamma 1] [delta 1]]
    """
    Lokta-Volterra (predator-prey) equations.
    dx/dt = αx - βxy
@@ -322,7 +322,7 @@ See 'Elegant Chaos' by J C Sprott for inspiration.
      (jnp.array [(- (* alpha  x) (* beta x y))
                  (- (* delta x y) (* gamma y))])))
 
-(defn [jit] vdp [v * [t 0] [mu 3.0]]
+(defn vdp [v * [t 0] [mu 3.0]]
    """
    Van der Pol oscillator.
    dx/dt = y
@@ -336,7 +336,7 @@ See 'Elegant Chaos' by J C Sprott for inspiration.
                        (- 1 (* x x)))
                     x)])))
 
-(defn [jit] dixon [v * [t 0] [alpha 0] [beta 0.7]]
+(defn dixon [v * [t 0] [alpha 0] [beta 0.7]]
    """
    Dixon system.
    dx/dt = xy / (xx - yy) - alpha x
@@ -357,7 +357,7 @@ See 'Elegant Chaos' by J C Sprott for inspiration.
 ;; ND ODEs, N>3 ;;;
 ;;;;;;;;;;;;;;;;;;;
 
-(defn [jit] coupled-pendulum [v * [t 0] [k 1]]
+(defn coupled-pendulum [v * [t 0] [k 1]]
    """
    Coupled pendulum.
    d^2x/dt^2 = k(y-x) - sin(x)

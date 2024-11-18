@@ -19,14 +19,14 @@
 ; also see lz4, zlib, blosc
 (import zstandard :as zstd)
 
-(import numerics [truncate])
+(import .numerics [truncate])
 
 
 ; express dynamics as a string of bytes
 
 ; calculate Lyapunov dimension
 ; calculate information dimension, D1
-; calculate correltaion dimension, D2
+; calculate correlation dimension, D2
 ; calculate Renyi dimension, Dq
 
 ; show information dimension / rate related to dimension of inertial manifold (Floryan & Graham)
