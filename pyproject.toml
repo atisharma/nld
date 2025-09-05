@@ -9,24 +9,26 @@ build-backend = "setuptools.build_meta"
 [project]
 name = "nld"
 dynamic = ["version"]
-description = "GPU-accelerated nonlinear dynamics library"
+description = "GPU-accelerated (jax) nonlinear dynamics library"
 readme = "README.md"
-requires-python = ">=3.8"
+requires-python = ">=3.11"
 license = {file = "LICENSE"}
 authors = [
-    {name = "Project Contributors", email = "info@example.com"},
+    {name = "Ati Sharma", email = "ati+nld@agalmic.ltd"},
 ]
 dependencies = [
-    "hy>=0.25.0",
+    "hy>=1.0.0",
+    "hyrule",
     "jax>=0.4.0",
     "jaxlib>=0.4.0",
     "numpy",
     "matplotlib",
+    "zstandard"
 ]
 
 [project.urls]
-Homepage = "https://github.com/username/nld"
-Issues = "https://github.com/username/nld/issues"
+Homepage = "https://github.com/atisharma/nld"
+Issues = "https://github.com/atisharma/nld/issues"
 
 [tool.setuptools_scm]
 
